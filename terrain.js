@@ -137,12 +137,6 @@ const animate = ()=>{
             // points.push(-yc)
             points[y*cols+x+1]=(heights[y][x+1])
         }
-    //     var geometry = new THREE.BufferGeometry();
-    //     const vertices = new Float32Array(points);
-    //     geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
-    //     var material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe:true } );
-    //     var mesh = new THREE.Mesh( geometry, material );
-    //     scene.add(mesh)
     }
     renderer.render(scene,camera);
 }
