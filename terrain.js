@@ -29,9 +29,9 @@ zaxisGeom.vertices.push(new THREE.Vector3(0,0,100));
 const zaxis = new THREE.Line(zaxisGeom,zmaterial);
 
 
-// scene.add( xaxis )
-// scene.add( yaxis )
-// scene.add( zaxis )
+scene.add( xaxis )
+scene.add( yaxis )
+scene.add( zaxis )
 
 
 const scl = 5;
