@@ -6,7 +6,7 @@
   "dependencies": {
     "lite-server": "^2.4.0"
   },
-  "scripts":{
-    "start":"./node_modules/.bin/lite-server"
+  "scripts": {
+    "start": "./node_modules/.bin/lite-server"
   }
 }

@@ -12,20 +12,20 @@ document.body.appendChild(renderer.domElement);
 
 // var xmaterial = new THREE.LineBasicMaterial( { color: 0xff0000 } );
 // const xaxisGeom = new THREE.Geometry();
-// xaxisGeom.vertices.push(new THREE.Vector3(0,0,0));
-// xaxisGeom.vertices.push(new THREE.Vector3(100,0,0)); 
+// xaxisGeom.vertices.push(new THREE.Vector3(0,10,0));
+// xaxisGeom.vertices.push(new THREE.Vector3(100,10,0)); 
 // const xaxis = new THREE.Line(xaxisGeom,xmaterial);
 
 // var ymaterial = new THREE.LineBasicMaterial( { color: 0x00ff00 } );
 // const yaxisGeom = new THREE.Geometry();
-// yaxisGeom.vertices.push(new THREE.Vector3(0,0,0));
+// yaxisGeom.vertices.push(new THREE.Vector3(0,10,0));
 // yaxisGeom.vertices.push(new THREE.Vector3(0,100,0)); 
 // const yaxis = new THREE.Line(yaxisGeom,ymaterial);
 
 // var zmaterial = new THREE.LineBasicMaterial( { color: 0x0000ff } );
 // const zaxisGeom = new THREE.Geometry();
-// zaxisGeom.vertices.push(new THREE.Vector3(0,0,0));
-// zaxisGeom.vertices.push(new THREE.Vector3(0,0,100)); 
+// zaxisGeom.vertices.push(new THREE.Vector3(0,10,0));
+// zaxisGeom.vertices.push(new THREE.Vector3(0,10,100)); 
 // const zaxis = new THREE.Line(zaxisGeom,zmaterial);
 
 // scene.add( xaxis )
@@ -40,25 +40,13 @@ const rows = 128;
 const cols = 128;
 console.log(rows,cols);
 
-camera.position.set(cols/2*scl, -rows*scl, 300);
+camera.position.set(cols/2*scl, -700, 400);
 camera.lookAt( cols/2*scl, 0, 0 );
+// camera.position.set(200,0,1000);
+// camera.lookAt( 200,0,0, );
 
 
 
-let noiseOrigin = 0;
-
-const heights = [];
-let yoff=noiseOrigin;
-for(let y=0;y<rows;y++){
-    let xoff=0;
-    const heightsRow =[]
-    for(let x=0;x<cols;x++){
-        heightsRow.push(noise.perlin2(xoff,yoff)*25)
-        xoff+=0.1
-    }
-    heights.push(heightsRow);
-    yoff+=0.1
-}
 
 const points=[];
 for(let y=0;y<rows-1;y++)
@@ -70,33 +58,86 @@ for(let y=0;y<rows-1;y++)
             let yc = y*scl;
             let zc = 0;
 
+            //1st traingle
             points.push(xc)
             points.push(-yc)
-            points.push(heights[y][x])
+            points.push(0)
             
 
             points.push(xc)
             points.push(-ycn)
-            points.push(heights[y+1][x])
+            points.push(0)
 
             points.push(xcn)
             points.push(-yc)
-            points.push(heights[y][x+1])
+            points.push(0)
+
+
     }
 
 }
 
-var geometry = new THREE.BufferGeometry();
+const geometry = new THREE.BufferGeometry();
 const vertices = new Float32Array(points);
 geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
-var material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-var mesh = new THREE.Mesh( geometry, material );
+
+const vertexShader = `
+varying vec2 vUv;
+varying vec4 worldCoord;
+
+void main()
+{
+  vUv = uv;
+  vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+  gl_Position = projectionMatrix * mvPosition;
+  worldCoord = modelMatrix * vec4( position, 1.0 );
+}
+  `
+
+const fragmentShader = `
+varying vec4 worldCoord;
+uniform vec3 colorA;
+uniform vec3 colorB;
+uniform vec3 colorC;
+
+vec3 getColor(float height){
+	if(height<0.5)
+	{
+		return mix(colorA,colorB,height);
+	}
+	else{
+		return mix(colorB,colorC,height);
+	}
+}
+
+void main() {
+	float normHeight = worldCoord.z / 255.0;
+	vec3 color = getColor(normHeight);
+  gl_FragColor = vec4(color, 1.0);
+
+}
+`
+
+const colors = {
+    colorA: {type: 'vec3', value: new THREE.Color(0xE82020)},
+    colorB: {type: 'vec3', value: new THREE.Color(0xF2C64D)},
+    colorC: {type: 'vec3', value: new THREE.Color(0x4DA2F2)}
+}
+
+const material =  new THREE.ShaderMaterial({
+    fragmentShader: fragmentShader,
+    vertexShader: vertexShader,
+    uniforms:colors,
+    // wireframe:true
+  })
+
+const mesh = new THREE.Mesh( geometry, material );
 scene.add(mesh)
 
 
 function newFilledArray(length, val) {
-    var array = [];
-    for (var i = 0; i < length; i++) {
+    const array = [];
+    for (let i = 0; i < length; i++) {
         array[i] = val;
     }
     return array;
@@ -111,8 +152,6 @@ for(let i=0;i<128;i++)
     const row = newFilledArray(128,0)
     allHeights.push(row)
 }
-
-console.log(allHeights)
 
 
 const animate = ()=>{
