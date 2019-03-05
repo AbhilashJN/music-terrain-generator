@@ -94,6 +94,7 @@ void main()
 }
   `
 
+
 const fragmentShader = `
 varying vec4 worldCoord;
 uniform vec3 colorA;
@@ -103,10 +104,10 @@ uniform vec3 colorC;
 vec3 getColor(float height){
 	if(height<0.5)
 	{
-		return mix(colorA,colorB,height);
+		return colorA*(0.5-height)*2.0 + colorB*height*2.0;
 	}
 	else{
-		return mix(colorB,colorC,height);
+		return colorB*(1.0-height)*2.0 + colorC*(height-0.5)*2.0;
 	}
 }
 
@@ -170,7 +171,7 @@ const animate = ()=>{
     
     mesh.geometry.attributes.position.needsUpdate = true;
 
-    const points = mesh.geometry.attributes.position.array;
+		const points = mesh.geometry.attributes.position.array;
 
     for(let y=0;y<rows-1;y++)
     {
