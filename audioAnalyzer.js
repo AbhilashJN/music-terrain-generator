@@ -51,7 +51,10 @@ window.onload=()=>{
     document.querySelector('#play').addEventListener('click',()=>{
         // fetchSample(audioUrl);
         if(selectedFile){
-            const audioBuffer = audioContext.decodeAudioData(selectedFile).then(playAudio)
+            const audioBuffer = audioContext.decodeAudioData(selectedFile).then(playAudio).catch(()=>
+            {
+                alert("Cannot play file. Select the file again or try a different file.")
+            })
         }
     }
     );

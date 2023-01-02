@@ -1,13 +1,51 @@
 <html>
-    <head>
-    </head>
-    <body>
-        <input id="audio-file" type="file" accept="audio/*" />
-        <button id="play">Play</button>
-        <button id="stop">Stop</button>
-        <script src="three.min.js"></script>
-        <script src="perlin.js"></script>
-        <script src="audioAnalyzer.js"></script>
-        <script src="terrain.js"></script>
-    </body>
+
+<head>
+</head>
+<style>
+    body {
+        font-family: sans-serif;
+        padding: 4px;
+        background-color: #15191C;
+        color: white;
+
+    }
+
+    .bgdiv {
+        padding: 0;
+
+    }
+
+    .title {
+        font-variant: small-caps;
+        padding: 0 0 5px 0;
+        font-weight: 300;
+        font-size: 300%;
+        /* background-color: red; */
+        margin: 0;
+    }
+
+    .btn {
+        background-color: crimson;
+        color: white;
+        border: 0;
+        padding: 4px 8px;
+        margin: 10px;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <p class="title">music terrain generator</p>
+    Select music file &nbsp;&nbsp;&nbsp;&nbsp;
+    <input id="audio-file" type="file" accept="audio/*" />
+    <br />
+    <button id="play" class="btn">Play</button>
+    <button id="stop" class="btn">Stop</button>
+    <script src="three.min.js"></script>
+    <script src="perlin.js"></script>
+    <script src="audioAnalyzer.js"></script>
+    <script src="terrain.js"></script>
+</body>
+
 </html>
